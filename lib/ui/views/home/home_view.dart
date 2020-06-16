@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mind_dumps/constants/Strings.dart';
 import 'package:mind_dumps/services/FirebaseAuthService.dart';
+import 'package:mind_dumps/ui/views/hero/title_hero.dart';
+import 'package:mind_dumps/ui/views/home/writer_view.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
@@ -9,27 +10,45 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Mind Dumps',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ),
-            const Spacer(),
-            RaisedButton(
-              onPressed: () {
-                context.read<FirebaseAuthService>().signOut();
-              },
-              child: Text(Strings.signOut),
-            ),
-            const Spacer(),
-          ],
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              context.read<FirebaseAuthService>().signOut();
+            },
+          ),
+        ],
+        title: TitleHero(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.fiber_new),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WriterView(),
+          ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: HomeBody(),
     );
+  }
+}
+
+class HomeBody extends StatefulWidget {
+  const HomeBody({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _HomeBodyState createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<HomeBody> {
+  @override
+  Widget build(BuildContext context) {
+    return Center();
   }
 }

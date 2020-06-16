@@ -11,10 +11,19 @@ Widget google(BuildContext context) => button(
         height: 18.0,
         width: 18.0,
       ),
-      () => context.read<FirebaseAuthService>().signInWithGoogle(),
+      () => {
+        context.read<FirebaseAuthService>().signInWithGoogle().catchError(
+              (error) => Scaffold.of(context).showSnackBar(loginFailed()),
+            ),
+      },
       Colors.white,
       Colors.indigo,
       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    );
+
+SnackBar loginFailed() => SnackBar(
+      content: Text("Failed to Login!"),
+      backgroundColor: Colors.grey,
     );
 
 Widget facebook(BuildContext context) => button(
@@ -26,7 +35,7 @@ Widget facebook(BuildContext context) => button(
         height: 18.0,
         width: 18.0,
       ),
-      () => {},
+      () => {Scaffold.of(context).showSnackBar(loginFailed())},
       Colors.indigo,
       Colors.white,
       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

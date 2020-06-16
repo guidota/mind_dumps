@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mind_dumps/ui/views/authentication/sign_in/widgets/buttons.dart';
+import 'package:mind_dumps/ui/views/hero/title_hero.dart';
 import 'package:provider/provider.dart';
 
 import 'sign_in_view_model.dart';
@@ -12,7 +13,10 @@ class SignInView extends StatelessWidget {
     return ChangeNotifierProvider<SignInViewModel>(
       create: (_) => SignInViewModel(context.read),
       builder: (_, child) {
-        return const Scaffold(
+        return Scaffold(
+          appBar: AppBar(
+            title: TitleHero(),
+          ),
           body: SignInViewBody._(),
         );
       },

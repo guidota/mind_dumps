@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1011420971064",
+    "firebase_url": "https://mind-dumps.firebaseio.com",
+    "project_id": "mind-dumps",
+    "storage_bucket": "mind-dumps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011420971064:android:f566ff5c23e50f3e1fa6cd",
+        "android_client_info": {
+          "package_name": "com.example.mind_dumps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1011420971064-v0k91gabpsrtlcmu6r1qdma9mlu6831c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRmayn7HROP1eIIncdcx_KyCqNkUNUYnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1011420971064-v0k91gabpsrtlcmu6r1qdma9mlu6831c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
