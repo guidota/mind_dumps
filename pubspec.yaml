@@ -18,10 +18,15 @@ dependencies:
 
   # State
   provider: ^4.0.1
+  bloc: ^4.0.0
+  flutter_bloc: ^4.0.1
 
   # UI
   firestore_ui: ^1.10.0
+  animated_stream_list: ^1.1.0
   flutter_auth_buttons: ^0.8.0
+  path_morph: ^1.0.1
+  path_drawing: ^0.4.1
 
   flutter:
     sdk: flutter

@@ -1,38 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:mind_dumps/services/FirebaseAuthService.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mind_dumps/bloc/auth_bloc.dart';
+import 'package:mind_dumps/bloc/dumps_bloc.dart';
+import 'package:mind_dumps/models/dump.dart';
+import 'package:mind_dumps/repository/dump_repository.dart';
+import 'package:mind_dumps/ui/views/hero/mind_dump_animation.dart';
 import 'package:mind_dumps/ui/views/hero/title_hero.dart';
 import 'package:mind_dumps/ui/views/home/writer_view.dart';
-import 'package:provider/provider.dart';
+
+import 'widgets/dumps.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              context.read<FirebaseAuthService>().signOut();
-            },
+    var userState = context.bloc<AuthBloc>().state as Authenticated;
+    return RepositoryProvider<DumpRepository>(
+      create: (context) => FirestoreDumpRepository(userState.user)..refresh(),
+      child: BlocProvider<DumpsBloc>(
+        create: (context) => DumpsBloc(context.repository<DumpRepository>()),
+        child: Scaffold(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                icon: Icon(Icons.exit_to_app),
+                onPressed: () {
+                  context.repository<AuthRepository>().signOut();
+                },
+              ),
+            ],
+            title: TitleHero(),
           ),
-        ],
-        title: TitleHero(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.fiber_new),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WriterView(),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.note_add),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WriterView(
+                  dump: MindDump.empty(),
+                ),
+              ),
+            ),
           ),
+          body: HomeBody(),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: HomeBody(),
     );
   }
 }
@@ -49,6 +64,12 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   @override
   Widget build(BuildContext context) {
-    return Center();
+    return BlocBuilder<DumpsBloc, DumpState>(
+      builder: (context, state) => Center(
+        child: state is DumpHasDataState
+            ? DumpList(state.data)
+            : CircularProgressIndicator(),
+      ),
+    );
   }
 }

@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mind_dumps/bloc/auth_bloc.dart';
+import 'package:mind_dumps/models/User.dart';
 
-import '../models/User.dart';
+class FirebaseAuthRepository extends AuthRepository{
 
-class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-  FirebaseAuthService({FirebaseAuth firebaseAuth, GoogleSignIn googleSignin})
+  FirebaseAuthRepository({FirebaseAuth firebaseAuth, GoogleSignIn googleSignin})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignin ?? GoogleSignIn();
 
@@ -27,11 +28,19 @@ class FirebaseAuthService {
     return _firebaseAuth.onAuthStateChanged.map(_userFromFirebase);
   }
 
+  @override
+  Future<User> getUser() async {
+    final user = await _firebaseAuth.currentUser();
+    return _userFromFirebase(user);
+  }
+
+  @override
   Future<User> signInAnonymously() async {
     final authResult = await _firebaseAuth.signInAnonymously();
     return _userFromFirebase(authResult.user);
   }
 
+  @override
   Future<User> signInWithGoogle() async {
     final googleUser = await _googleSignIn.signIn();
     final googleAuth = await googleUser.authentication;
@@ -43,12 +52,20 @@ class FirebaseAuthService {
     return _userFromFirebase(authResult.user);
   }
 
+  @override
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
   }
 
-  Future<User> currentUser() async {
-    final user = await _firebaseAuth.currentUser();
-    return _userFromFirebase(user);
+  @override
+  Future<bool> isAuthenticated() async {
+    final currentUser = await _firebaseAuth.currentUser();
+    return currentUser != null;
   }
+
+  @override
+  Stream<User> user() {
+    return _firebaseAuth.onAuthStateChanged.map(_userFromFirebase);
+  }
+
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mind_dumps/services/FirebaseAuthService.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mind_dumps/bloc/auth_bloc.dart';
 
 Widget google(BuildContext context) => button(
       Image(
@@ -12,8 +12,16 @@ Widget google(BuildContext context) => button(
         width: 18.0,
       ),
       () => {
-        context.read<FirebaseAuthService>().signInWithGoogle().catchError(
-              (error) => Scaffold.of(context).showSnackBar(loginFailed()),
+        context.bloc<AuthBloc>().add(AuthStart()),
+        context
+            .repository<AuthRepository>()
+            .signInWithGoogle()
+            .then((value) => value)
+            .catchError(
+              (error) => {
+                print(error),
+                Scaffold.of(context).showSnackBar(loginFailed())
+              },
             ),
       },
       Colors.white,

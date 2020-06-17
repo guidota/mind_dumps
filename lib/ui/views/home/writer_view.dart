@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mind_dumps/services/FirebaseAuthService.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mind_dumps/bloc/auth_bloc.dart';
+import 'package:mind_dumps/models/dump.dart';
 
 class WriterView extends StatefulWidget {
+  final MindDump dump;
+
   const WriterView({
     Key key,
+    this.dump,
   }) : super(key: key);
 
   @override
@@ -19,20 +23,17 @@ class _WriterViewState extends State<WriterView>
   TextEditingController textController = TextEditingController();
   AnimationController _animationController;
   Animation<Color> _animateColor;
-  Animation<double> _animateIcon;
   Curve _curve = Curves.easeOut;
 
   @override
   initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200))
           ..addListener(() {
             setState(() {});
           });
-    _animateIcon =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _animateColor = ColorTween(
-      begin: Colors.indigo,
+      begin: Colors.deepPurple[800],
       end: Colors.green,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -42,6 +43,7 @@ class _WriterViewState extends State<WriterView>
         curve: _curve,
       ),
     ));
+    textController.text = widget.dump.content;
     super.initState();
   }
 
@@ -53,8 +55,8 @@ class _WriterViewState extends State<WriterView>
 
   animatePost() {
     _animateColor = ColorTween(
-      begin: Colors.indigo,
-      end: Colors.grey,
+      begin: _animateColor.value,
+      end: Colors.amber,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Interval(
@@ -77,14 +79,8 @@ class _WriterViewState extends State<WriterView>
   }
 
   postOk(BuildContext context) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green,
-        content: Text('Done!'),
-      ),
-    );
     _animateColor = ColorTween(
-      begin: Colors.grey,
+      begin: _animateColor.value,
       end: Colors.green,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -95,7 +91,13 @@ class _WriterViewState extends State<WriterView>
       ),
     ));
     _animationController.forward().then((value) => {
-          Future.delayed(Duration(seconds: 1))
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text('Done!'),
+            ),
+          ),
+          Future.delayed(Duration(seconds: 4))
               .then((value) => Navigator.of(context).pop()),
         });
   }
@@ -121,10 +123,14 @@ class _WriterViewState extends State<WriterView>
           controller: textController,
           decoration: InputDecoration(
             labelText: 'Write down all your thoughts...',
-            labelStyle: Theme.of(context).textTheme.headline5,
+            labelStyle: Theme.of(context).textTheme.subtitle2,
             floatingLabelBehavior: FloatingLabelBehavior.always,
+            contentPadding: EdgeInsets.all(8),
           ),
           style: Theme.of(context).textTheme.headline5,
+          strutStyle: StrutStyle(),
+          enableSuggestions: true,
+          enableInteractiveSelection: true,
           expands: true,
           keyboardType: TextInputType.multiline,
           maxLines: null,
@@ -136,22 +142,41 @@ class _WriterViewState extends State<WriterView>
 
   _post(BuildContext context, String content) async {
     // get user
-    var currentUser = await context.read<FirebaseAuthService>().currentUser();
-
+    var userState = context.bloc<AuthBloc>().state as Authenticated;
+    var currentUser = userState.user;
     animatePost();
-    // post content
-    Firestore.instance
+    var collection = Firestore.instance
         .collection('users')
         .document(currentUser.uid)
-        .collection('dumps')
-        .document()
-        .setData({'content': content})
-        .then((value) => postOk(context))
-        .catchError(
-          (e) => {
-            print(e),
-            postFailed(context),
-          },
-        );
+        .collection('dumps');
+    if (widget.dump.id == null || widget.dump.id.isEmpty) {
+      // create
+      // post content
+      collection
+          .document()
+          .setData({
+            'content': widget.dump.content,
+            'timestamp': widget.dump.timestamp
+          })
+          .then((value) => postOk(context))
+          .catchError(
+            (e) => {
+              print(e),
+              postFailed(context),
+            },
+          );
+    } else {
+      // update
+      collection
+          .document(widget.dump.id)
+          .updateData(widget.dump.toJson())
+          .then((value) => postOk(context))
+          .catchError(
+            (e) => {
+              print(e),
+              postFailed(context),
+            },
+          );
+    }
   }
 }
