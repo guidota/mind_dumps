@@ -28,6 +28,9 @@ dependencies:
   path_morph: ^1.0.1
   path_drawing: ^0.4.1
 
+  # Model
+  equatable: ^1.2.0
+
   flutter:
     sdk: flutter
 
@@ -35,6 +38,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pedantic: ^1.8.0
+  mockito: ^4.1.1
+  bloc_test: ^5.1.0
 
 flutter:
 

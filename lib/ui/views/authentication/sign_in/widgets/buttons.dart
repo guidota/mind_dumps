@@ -12,17 +12,7 @@ Widget google(BuildContext context) => button(
         width: 18.0,
       ),
       () => {
-        context.bloc<AuthBloc>().add(AuthStart()),
-        context
-            .repository<AuthRepository>()
-            .signInWithGoogle()
-            .then((value) => value)
-            .catchError(
-              (error) => {
-                print(error),
-                Scaffold.of(context).showSnackBar(loginFailed())
-              },
-            ),
+        context.bloc<AuthBloc>().add(GoogleSignInEvent()),
       },
       Colors.white,
       Colors.indigo,

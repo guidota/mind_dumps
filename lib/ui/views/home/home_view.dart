@@ -4,7 +4,6 @@ import 'package:mind_dumps/bloc/auth_bloc.dart';
 import 'package:mind_dumps/bloc/dumps_bloc.dart';
 import 'package:mind_dumps/models/dump.dart';
 import 'package:mind_dumps/repository/dump_repository.dart';
-import 'package:mind_dumps/ui/views/hero/mind_dump_animation.dart';
 import 'package:mind_dumps/ui/views/hero/title_hero.dart';
 import 'package:mind_dumps/ui/views/home/writer_view.dart';
 

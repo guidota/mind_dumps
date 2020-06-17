@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mind_dumps/bloc/auth_bloc.dart';
 import 'package:mind_dumps/repository/auth_repository.dart';
-import 'package:mind_dumps/ui/views/hero/mind_dump_animation.dart';
 import 'package:mind_dumps/ui/views/home/home_view.dart';
 
 import 'ui/views/authentication/sign_in/sign_in_view.dart';
@@ -11,9 +10,9 @@ void main() => runApp(
       RepositoryProvider<AuthRepository>(
         create: (_) => FirebaseAuthRepository(),
         child: BlocProvider<AuthBloc>(
-          create: (context) =>
-              AuthBloc(RepositoryProvider.of<AuthRepository>(context))
-                ..add(StartApp()),
+          create: (context) => AuthBloc(
+              repository: RepositoryProvider.of<AuthRepository>(context))
+            ..add(StartApp()),
           child: MyApp(),
         ),
       ),
