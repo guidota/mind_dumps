@@ -57,6 +57,20 @@ void main() {
     );
   });
 
+  group('Auth bloc test when user sign in with Google and fail', () {
+    blocTest(
+      'emits [Authenticating, NoAuthenticated] when GoogleSignInEvent is added',
+      wait: Duration(milliseconds: 150),
+      build: () {
+        when(authRepository.signInWithGoogle())
+            .thenAnswer((_) => Future.error(Error()));
+        return Future.value(authBloc);
+      },
+      act: (bloc) => bloc.add(GoogleSignInEvent()),
+      expect: [Authenticating(), NoAuthenticated()],
+    );
+  });
+
   test('close does not emit new states', () {
     expectLater(
       authBloc,
