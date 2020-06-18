@@ -82,9 +82,10 @@ class _DumpItemState extends State<DumpItem> {
                     IconButton(
                       icon: Icon(
                         Icons.delete_forever,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.error,
                       ),
-                      onPressed: () => _deleteMindDump(context, widget.mindDump),
+                      onPressed: () =>
+                          _deleteMindDump(context, widget.mindDump),
                     ),
                   ],
                 )

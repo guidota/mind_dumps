@@ -6,7 +6,9 @@ import 'package:mind_dumps/models/dump.dart';
 import 'package:mind_dumps/repository/dump_repository.dart';
 import 'package:mind_dumps/ui/views/hero/title_hero.dart';
 import 'package:mind_dumps/ui/views/home/writer_view.dart';
+import 'package:provider/provider.dart';
 
+import '../../../main.dart';
 import 'widgets/dumps.dart';
 
 class HomeView extends StatelessWidget {
@@ -28,6 +30,13 @@ class HomeView extends StatelessWidget {
                   context.repository<AuthRepository>().signOut();
                 },
               ),
+              Switch(
+                value: Provider.of<ThemeStateNotifier>(context).isDarkMode,
+                onChanged: (boolVal) {
+                  Provider.of<ThemeStateNotifier>(context, listen: false)
+                      .updateTheme(boolVal);
+                },
+              )
             ],
             title: TitleHero(),
           ),
